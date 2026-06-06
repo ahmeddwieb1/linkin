@@ -33,9 +33,12 @@ exports.register = async (req, res) => {
             // }
         })
     } catch (err) {
+        console.log(err);
+
         res.status(400).json({
             status: 'fail',
-            message: err
+            message: err.message,
+            stack: err.stack
         });
     }
 }
@@ -73,11 +76,20 @@ exports.login = async (req, res) => {
         //     status: 'success',
         // })
 
+        // } catch (err) {
+        //     res.status(400).json({
+        //         status: 'fail',
+        //         message: err
+        //     })
+        // }
     } catch (err) {
+        console.log(err);
+
         res.status(400).json({
             status: 'fail',
-            message: err
-        })
+            message: err.message,
+            stack: err.stack
+        });
     }
 }
 
