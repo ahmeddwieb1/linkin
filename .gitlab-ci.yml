@@ -14,7 +14,7 @@ smoke-test:
 
   before_script:
     - apk add --no-cache curl
-    - env > .env
+    - env | grep -E '^(PORT|DATABASE_URL|JWT_SECRET|JWT_EXPIRES_IN)' >> .env
   services:
     - docker:dind
 
@@ -22,8 +22,8 @@ smoke-test:
     - docker build -t linkin .
     - cat .env
     - docker run -d --name linkin -p 5000:5000 --env-file .env linkin
-    - docker logs linkin
     - sleep 10
+    - docker logs linkin
     - curl -s http://localhost:5000
 
 .docker-build:
