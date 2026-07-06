@@ -14,7 +14,7 @@ smoke-test:
 
   before_script:
     - apk add --no-cache curl
-    - env | grep -E '^(PORT|DATABASE_URL|JWT_SECRET|JWT_EXPIRES_IN)' >> .env
+    - env | grep -E '^(PORT|MONGO_URI|JWT_SECRET|JWT_EXPIRES_IN)' >> .env
   services:
     - docker:dind
 
