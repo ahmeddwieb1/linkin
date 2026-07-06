@@ -20,12 +20,13 @@ smoke-test:
 
   script:
     - docker build -t linkin .
-    - cat .env
     - docker run -d --name linkin -p 5000:5000 --env-file .env linkin
     - sleep 10
     - docker network ls
     - docker logs linkin
-    - curl -s http://linkin:5000 
+    - CONTAINER_IP=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' linkin)
+    - echo "Container IP: $CONTAINER_IP"
+    - curl -s http://$CONTAINER_IP:5000
 .docker-build:
   stage: docker
   image: docker:24
