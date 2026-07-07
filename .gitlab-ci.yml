@@ -53,13 +53,13 @@ deploy:
     - echo $IMAGE_NAME:$APP_VERSION
     - env | grep -E '^(PORT|MONGO_URI|JWT_SECRET|JWT_EXPIRES_IN)' >> .env
 
-script:
-  - |
-    scp -o StrictHostKeyChecking=no .env $EC2_USER@$EC2_HOST:/home/$EC2_USER/.env
-    
-    ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
-      docker pull $IMAGE_NAME:$APP_VERSION
-      docker stop linkin || true
-      docker rm linkin || true
-      docker run -d --name linkin -p 5000:5000 --env-file /home/$EC2_USER/.env $IMAGE_NAME:$APP_VERSION
-    "
+  script:
+    - |
+      scp -o StrictHostKeyChecking=no .env $EC2_USER@$EC2_HOST:/home/$EC2_USER/.env
+      
+      ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+        docker pull $IMAGE_NAME:$APP_VERSION
+        docker stop linkin || true
+        docker rm linkin || true
+        docker run -d --name linkin -p 5000:5000 --env-file /home/$EC2_USER/.env $IMAGE_NAME:$APP_VERSION
+      "
