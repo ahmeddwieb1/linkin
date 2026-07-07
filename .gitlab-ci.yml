@@ -49,14 +49,17 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - echo $EC2_HOST-$EC2_USER
+    - echo $EC2_USER-$EC2_HOST  
     - echo $IMAGE_NAME:$APP_VERSION
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
-        docker pull $IMAGE_NAME:$APP_VERSION
-        docker stop linkin || true
-        docker rm linkin || true 
-        docker run -d --name linkin -p 5000:5000  -e PORT=$PORT -e MONGO_URI=$MONGO_URI -e JWT_SECRET=$JWT_SECRET -e JWT_EXPIRES_IN=$JWT_EXPIRES_IN  $IMAGE_NAME:$APP_VERSION
-        docker logs linkin
-      "
+    - env | grep -E '^(PORT|MONGO_URI|JWT_SECRET|JWT_EXPIRES_IN)' >> .env
+
+script:
+  - |
+    scp -o StrictHostKeyChecking=no .env $EC2_USER@$EC2_HOST:/home/$EC2_USER/.env
+    
+    ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
+      docker pull $IMAGE_NAME:$APP_VERSION
+      docker stop linkin || true
+      docker rm linkin || true
+      docker run -d --name linkin -p 5000:5000 --env-file /home/$EC2_USER/.env $IMAGE_NAME:$APP_VERSION
+    "
