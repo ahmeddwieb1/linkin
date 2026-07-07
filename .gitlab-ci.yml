@@ -49,14 +49,16 @@ deploy:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    - echo $EC2_HOST-$EC2_USER
+    - echo $IMAGE_NAME:$APP_VERSION
   script:
     - |
       ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "
         cat > /home/$EC2_USER/.env << 'EOF'
-        PORT=$PORT
-        MONGO_URI=$MONGO_URI
-        JWT_SECRET=$JWT_SECRET
-        JWT_EXPIRES_IN=$JWT_EXPIRES_IN
+        PORT=${PORT}
+        MONGO_URI=${MONGO_URI}
+        JWT_SECRET=${JWT_SECRET}
+        JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
         EOF
 
         docker pull $IMAGE_NAME:$APP_VERSION
