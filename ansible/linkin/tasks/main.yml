@@ -1,25 +1,35 @@
 ---
 
 - name: Install prerequisites
-  ansible.builtin.apt:
+  apt:
     name:
       - ca-certificates
       - curl
     state: present
     update_cache: yes
 
-- name: Add Docker GPG key
-  ansible.builtin.apt_key:
+- name: Create keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Docker GPG key
+  get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
 
 - name: Add Docker repository
-  ansible.builtin.apt_repository:
-    repo: "deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
-    state: present
+  apt_repository:
+    repo: >
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu
+      {{ ansible_distribution_release }}
+      stable
 
-- name: Install Docker and Compose
-  ansible.builtin.apt:
+- name: Install Docker 
+  apt:
     name:
       - docker-ce
       - docker-ce-cli
@@ -28,13 +38,13 @@
     update_cache: yes
 
 - name: Start and enable Docker
-  ansible.builtin.service:
+  service:
     name: docker
     state: started
     enabled: yes
 
 - name: Add user to docker group
-  ansible.builtin.user:
+  user:
     name: "{{ ansible_user }}"
     groups: docker
     append: yes
@@ -44,33 +54,31 @@
 
 
 - name: Install Nginx
-  ansible.builtin.apt:
+  apt:
     name: nginx
     state: present
     update_cache: yes
 
 - name: Start and enable Nginx
-  ansible.builtin.systemd:
+  systemd:
     name: nginx
     state: started
     enabled: yes
 
 - name: copy nginx config
   copy:
-    src: nginx.conf
-    dest: /etc/nginx/nginx.conf
+    src: nginx.config
+    dest: /etc/nginx/nginx.config
     owner: root
     group: root
     mode: '0644'
+  notify: Restart nginx
     
 - name: Create ssl directory
 
   file:
-
       path: /etc/nginx/ssl
-
       state: directory
-
       mode: "0755"
 
 - name: copy cert 
@@ -93,3 +101,4 @@
   service:
     name: nginx
     state: reloaded
+
