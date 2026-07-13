@@ -68,7 +68,7 @@
 - name: copy nginx config
   copy:
     src: nginx.config
-    dest: /etc/nginx/nginx.config
+    dest: /etc/nginx/sites-available/nginx.conf
     owner: root
     group: root
     mode: '0644'
