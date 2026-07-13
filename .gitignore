@@ -14,3 +14,6 @@ terraform-provider-*
 *.tfvars.json
 
 *.terraform
+
+*.key
+*.crt

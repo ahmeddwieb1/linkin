@@ -1,0 +1,17 @@
+---
+# install docker 
+
+
+# install nginx 
+
+# test nginx and docker 
+
+# copy cert 
+
+# relad nginx 
+
+- name: Install and configure web servers
+  hosts: web
+  become: yes
+  roles:
+    - linkin
