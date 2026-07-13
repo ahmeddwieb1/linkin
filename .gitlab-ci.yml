@@ -51,10 +51,7 @@ playbook:
     - ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
 
   script:
-    - ansible-playbook \
-        --private-key ~/.ssh/id_rsa \
-        -i ansible/hosts.ini \
-        ansible/playbook1
+    - ansible-playbook --private-key ~/.ssh/id_rsa -i ansible/hosts.ini ansible/playbook1
 
 deploy:
   stage: deploy
